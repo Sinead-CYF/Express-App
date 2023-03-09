@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="/styles.css" />
+<script src="/script.js"></script>
+  <title>Cities Sentences API</title>
+</head>
+<body>
+  <h1>Cities & Adjectives Generator</h1>
+  <h2 id="sentence-placeholder">Loading sentence...</h2>
+  <button onclick="generateSentence()">Generate Sentence</button>
+
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+  <script>
+    const sentencePlaceholder = document.getElementById("sentence-placeholder");
+
+    axios.get("http://localhost:3300/sentence")
+      .then(response => {
+        const sentence = response.data;
+        sentencePlaceholder.textContent = sentence;
+      })
+      .catch(error => {
+        console.error(error);
+        sentencePlaceholder.textContent = "Error loading sentence";
+      });
+  </script>
+
+</body>
+</html>
+
