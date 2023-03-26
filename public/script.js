@@ -1,16 +1,25 @@
-function generateSentence() {
-    const sentencePlaceholder = document.getElementById("sentence-placeholder");
-  
-    axios.get("http://localhost:3300/sentence")
-      .then(response => {
-        const sentence = response.data;
-        sentencePlaceholder.textContent = sentence;
-      })
-      .catch(error => {
-        console.error(error);
-        sentencePlaceholder.textContent = "Error loading sentence";
-      });
-  }
-  
+function setSentence(sentence) {
+  const sentencePlaceholder = document.getElementById("sentence-placeholder");
+  sentencePlaceholder.textContent = sentence;
+}
 
-  //test
+function generateSentence() {
+  axios.get("http://localhost:3300/sentence")
+    .then(response => {
+      const sentence = response.data;
+      setSentence(sentence);
+    })
+    .catch(error => {
+      console.error(error);
+      setSentence("Error loading sentence");
+    });
+}
+
+
+
+
+
+
+
+
+

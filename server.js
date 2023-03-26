@@ -1,4 +1,3 @@
-const client = require("./connect.js");
 const axios = require("axios");
 const cors = require("cors");
 const express = require("express");
@@ -11,10 +10,7 @@ const http = require("http");
 const fs = require("fs");
 
 const server = http.createServer((req, res) => {
-  // set content type header
   res.setHeader("Content-Type", "text/html");
-
-  // read index.html file and send response
   fs.readFile("./index.html", (err, data) => {
     if (err) {
       res.statusCode = 500;
@@ -93,12 +89,3 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-/*  POSTGRES DATABASE 
-app.get('/cities', (req, res) => {
-    client.query('select * from public.cities', (err, result) => {
-        if(!err){
-            res.send(result.rows);
-        }
-    });
-    client.end;
-})  */
