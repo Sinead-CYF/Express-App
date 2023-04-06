@@ -1,91 +1,84 @@
-require("dotenv").config();
 const axios = require("axios");
 const cors = require("cors");
 const express = require("express");
+const path = require("path");
+const dotenv = require("dotenv");
+dotenv.config({ path: path.resolve(__dirname, ".env") });
 
 const app = express();
 app.use(cors());
 
-const path = require("path");
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static("public"));
 
-const http = require("http");
-const fs = require("fs");
+const PORT = process.env.PORT || 3300;
+const baseUrl =
+  process.env.NODE_ENV === "production"
+    ? process.env.PRODUCTION_URL
+    : `http://localhost:${PORT}`;
 
-const server = http.createServer((req, res) => {
-  res.setHeader("Content-Type", "text/html");
-  fs.readFile("./index.html", (err, data) => {
-    if (err) {
-      res.statusCode = 500;
-      res.end("Error reading index.html file");
-    } else {
-      res.statusCode = 200;
-      res.end(data);
-    }
-  });
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
 });
 
-app.listen(process.env.PORT || 3300, () => {
-  console.log(`Server listening on port ${process.env.PORT}`);
-});
+const adjectives = [
+  "beautiful",
+  "fun",
+  "vibrant",
+  "exciting",
+  "wonderful",
+  "remarkable",
+  "cultural",
+  "diverse",
+  "rural",
+  "quaint",
+  "friendly",
+  "picturesque",
+];
+const cities = [
+  "London",
+  "Birmingham",
+  "Manchester",
+  "Paris",
+  "Belfast",
+  "Melbourne",
+  "Florence",
+  "Essex",
+  "Bristol",
+  "Coventry",
+  "Oxford",
+  "Cambridge",
+];
 
 app.get("/cities", (req, res) => {
-  const cities = [
-    "London",
-    "Birmingham",
-    "Manchester",
-    "Paris",
-    "Belfast",
-    "Melbourne",
-    "Florence",
-    "Essex",
-    "Bristol",
-    "Coventry",
-    "Oxford",
-    "Cambridge",
-  ];
   const randomIndex = Math.floor(Math.random() * cities.length);
   const randomCity = cities[randomIndex];
   res.send(randomCity);
 });
 
 app.get("/adjectives", (req, res) => {
-  const adjectives = [
-    "beautiful",
-    "fun",
-    "vibrant",
-    "exciting",
-    "wonderful",
-    "remarkable",
-    "cultural",
-    "diverse",
-    "rural",
-    "quaint",
-    "friendly",
-    "picturesque",
-  ];
   const randomIndex = Math.floor(Math.random() * adjectives.length);
   const randomAdjective = adjectives[randomIndex];
   res.send(randomAdjective);
 });
 
-app.get("/sentence", (req, res) => {
-  const adjectivesEndpoint = `http://localhost:3300/adjectives`;
-  const citiesEndpoint = `http://localhost:3300/cities`;
+app.get("/sentence", async (req, res) => {
+  try {
+    const adjectiveEndpoint = `${baseUrl}/adjectives`;
+    const cityEndpoint = `${baseUrl}/cities`;
 
-  const getAdjective = axios.get(adjectivesEndpoint);
-  const getCity = axios.get(citiesEndpoint);
-  Promise.all([getAdjective, getCity])
-    .then((results) => {
-      const adjective = results[0].data;
-      const city = results[1].data;
-      const sentence = `The ${adjective} city of ${city}.`;
-      res.send(sentence);
-    })
-    .catch((error) => {
-      console.error(error);
-      res.status(500).send("Error generating sentence");
-    });
+    const [adjectiveResponse, cityResponse] = await Promise.all([
+      axios.get(adjectiveEndpoint),
+      axios.get(cityEndpoint),
+    ]);
+
+    const adjective = adjectiveResponse.data;
+    const city = cityResponse.data;
+    const sentence = `The ${adjective} city of ${city}.`;
+    res.send(sentence);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error generating sentence");
+  }
 });
 
 app.get("/", (req, res) => {

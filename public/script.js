@@ -3,15 +3,13 @@ function setSentence(sentence) {
   sentencePlaceholder.textContent = sentence;
 }
 
-function generateSentence() {
-  axios
-    .get(`http://localhost:3300/sentence`)
-    .then((response) => {
-      const sentence = response.data;
-      setSentence(sentence);
-    })
-    .catch((error) => {
-      console.error(error);
-      setSentence("Error loading sentence");
-    });
+async function generateSentence() {
+  try {
+    const response = await axios.get("/sentence");
+    const sentence = response.data;
+    setSentence(sentence);
+  } catch (error) {
+    console.error(error);
+    setSentence("Error loading sentence");
+  }
 }
