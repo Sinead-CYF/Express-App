@@ -1,5 +1,3 @@
-require("dotenv").config();
-
 function setSentence(sentence) {
   const sentencePlaceholder = document.getElementById("sentence-placeholder");
   sentencePlaceholder.textContent = sentence;

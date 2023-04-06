@@ -2,8 +2,10 @@ require("dotenv").config();
 const axios = require("axios");
 const cors = require("cors");
 const express = require("express");
+
 const app = express();
 app.use(cors());
+
 const path = require("path");
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -23,10 +25,9 @@ const server = http.createServer((req, res) => {
   });
 });
 
-app.listen(process.env.PORT, () => {
+app.listen(process.env.PORT || 3300, () => {
   console.log(`Server listening on port ${process.env.PORT}`);
 });
-
 
 app.get("/cities", (req, res) => {
   const cities = [
@@ -71,6 +72,7 @@ app.get("/adjectives", (req, res) => {
 app.get("/sentence", (req, res) => {
   const adjectivesEndpoint = `http://localhost:3300/adjectives`;
   const citiesEndpoint = `http://localhost:3300/cities`;
+
   const getAdjective = axios.get(adjectivesEndpoint);
   const getCity = axios.get(citiesEndpoint);
   Promise.all([getAdjective, getCity])
